@@ -7,6 +7,8 @@ export class DomListener {
     }
     this.$root = $root
     this.listeners = listeners
+    // массив для сохранения events и callbacks
+    this.bindListeners = []
   }
   initDomListener() {
     this.listeners.forEach( listener => {
@@ -16,11 +18,18 @@ export class DomListener {
             `Method ${method} is not implemented in ${this.name} Component`
         )
       }
-      this.$root.on(listener, this[method].bind(this))
+      const CurrentBindListener = this[method].bind(this)
+      // сохраняем используемые обработчики
+      this.bindListeners.push({
+        e: listener,
+        bindListener: CurrentBindListener})
+      this.$root.on(listener, CurrentBindListener)
     })
   }
   removeDomListener() {
-    // realize
+    this.bindListeners.forEach(({e, bindListener}) => {
+      this.$root.off(e, bindListener)
+    })
   }
 }
 
