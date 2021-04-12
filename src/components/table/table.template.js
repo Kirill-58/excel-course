@@ -3,15 +3,16 @@ const letterCodes = {
   Z: 90,
 }
 
-function createCell() {
+function createCell(index) {
   return `
-    <div class="cell" contenteditable="true"></div>
+    <div class="cell" contenteditable="true" data-col="${index}"></div>
     `
 }
 
-function createCol(value) {
-  return `<div class="column">
+function createCol(value, index) {
+  return `<div class="column" data-type="resizable" data-col="${index}">
                         ${value}
+                        <div class="column-resize" data-resize="col"></div>
                     </div>`
 }
 
@@ -20,9 +21,11 @@ function toChar(_, index) {
 }
 
 function createRow(index, content) {
-  return `<div class="row">
+  const resize = index ? '<div class="row-resize" data-resize="row"></div>' : ''
+  return `<div class="row" data-type="resizable" data-row="${index}">
                 <div class="row-info">
-${index}
+                ${index}
+                ${resize}
                 </div>
                 <div class="row-data">
                   ${content}
@@ -45,7 +48,7 @@ export function createTable(rowsCount = 10) {
   row.push(createRow('', arrayLetter))
 
   for (let i = 0; i < quantityCol; i++) {
-    col.push(createCell())
+    col.push(createCell(i))
   }
 
   for (let i = 0; i < rowsCount; i++) {
